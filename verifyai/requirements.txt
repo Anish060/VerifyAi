@@ -1,0 +1,5 @@
+torch
+transformers
+pdfplumber
+docx2txt
+pillow
