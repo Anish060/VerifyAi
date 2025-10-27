@@ -1,3 +1,12 @@
+CREATE TABLE users (
+    user_id INT(11) NOT NULL AUTO_INCREMENT,
+    username VARCHAR(255)  DEFAULT NULL,
+    passwordd VARCHAR(255) NOT NULL,
+    PRIMARY KEY (user_id)
+);
+INSERT INTO users ( username, passwordd) VALUES
+( 'Anish@gmail.com', '123'),
+('Suresh@gmail.com', '1234');
 CREATE TABLE verificationrecords (
     record_id INT(11) NOT NULL AUTO_INCREMENT,
     user_id INT(11) NOT NULL,
@@ -17,13 +26,3 @@ CREATE TABLE verificationrecords (
     PRIMARY KEY (record_id),
     KEY user_id (user_id) -- This is a common practice for foreign keys or frequently searched columns
 );
-
-CREATE TABLE users (
-    user_id INT(11) NOT NULL AUTO_INCREMENT,
-    username VARCHAR(255)  DEFAULT NULL,
-    passwordd VARCHAR(255) NOT NULL,
-    PRIMARY KEY (user_id)
-);
-INSERT INTO users ( username, passwordd) VALUES
-( 'Anish@gmail.com', '123'),
-('Suresh@gmail.com', '1234');
