@@ -17,10 +17,17 @@ const Login = () => {
 
         try {
             // 1. Send login credentials to the backend
-            const response = await axios.post(API_URL, {
-                username: email, // Assuming your backend uses 'username' field for email/login
-                password: password,
-            });
+            const response = await axios.post(
+  API_URL,
+  {
+    username: email, // backend expects 'username'
+    password: password,
+  },
+  {
+    withCredentials: true, // ✅ allows browser to store JWT cookie
+  }
+);
+
 
             // The backend should handle verification and SET THE JWT COOKIE
             // in the response header (Set-Cookie: jwt=...). 

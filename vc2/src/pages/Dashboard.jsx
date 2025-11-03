@@ -47,15 +47,19 @@ const Dashboard = () => {
 
     try {
       const response = await axios.post(API_URL, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        onUploadProgress: (e) => {
-          const percent = Math.round((e.loaded * 100) / e.total);
-          setUploadStatus((prev) => ({
-            ...prev,
-            percentage: percent > 5 ? percent : 5,
-          }));
-        },
-      });
+  headers: {
+    "Content-Type": "multipart/form-data",
+  },
+  withCredentials: true, // ✅ send cookies (JWT)
+  onUploadProgress: (e) => {
+    const percent = Math.round((e.loaded * 100) / e.total);
+    setUploadStatus((prev) => ({
+      ...prev,
+      percentage: percent > 5 ? percent : 5,
+    }));
+  },
+});
+
 
       const data = response.data;
       setUploadStatus({

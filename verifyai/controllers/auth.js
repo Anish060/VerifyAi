@@ -48,12 +48,12 @@ exports.handleLogin = async (req, res) => {
         );
 
         // 5. Set JWT as an HTTP-Only Cookie
-        res.cookie('jwt', token, {
-            httpOnly: true,                 // Essential for security
-            secure: process.env.NODE_ENV === 'production', // Use 'secure' in production (HTTPS)
-            maxAge: 24 * 60 * 60 * 1000,    // 1 day expiration
-            sameSite: 'Lax'                 // Good default cross-site setting
-        });
+       res.cookie('jwt', token, {
+  httpOnly: true,
+  secure: true, // Always true because both Render and Vercel use HTTPS
+  sameSite: 'None', // Must be 'None' for cross-domain cookies
+  maxAge: 24 * 60 * 60 * 1000,
+});
 
         // 6. Send success response and the user ID
         sendResponse(res, 200, { 
