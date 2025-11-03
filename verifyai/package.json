@@ -1,10 +1,10 @@
 {
   "name": "verifyai",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "postinstall": "apt-get update && apt-get install -y python3 python3-pip && pip3 install -r requirements.txt"
+    "postinstall": "pip3 install --no-cache-dir -r requirements.txt"
   },
   "dependencies": {
     "axios": "^1.11.0",
@@ -14,7 +14,6 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
-    "mysql2": "^3.15.3",
     "pg": "^8.16.3"
   }
 }
