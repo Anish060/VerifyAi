@@ -9,13 +9,24 @@ const cors = require('cors');
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 8080;
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://verify-ai-lake.vercel.app'
+];
+
 const corsOptions = {
-    // 2. Specify the exact origin of your React frontend
-    origin: 'http://localhost:5173', 
-    
-    // 3. IMPORTANT: Allow cookies/credentials to be sent (needed for JWT cookie)
-    credentials: true, 
+  origin: (origin, callback) => {
+    // Allow requests with no origin (for tools like Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
 };
+
 
 app.use(cors(corsOptions)); 
 
