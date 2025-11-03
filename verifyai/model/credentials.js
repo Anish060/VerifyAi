@@ -1,28 +1,31 @@
 const db = require('../config/database.js');
+
 const getAllCredentials = async () => {
-    try {
-        // mysql2/promise returns [rows, fields] array
-        const [rows] = await db.query("SELECT * FROM users");
-        return rows;
-    } catch (err) {
-        console.error('Database error in getAllCredentials:', err);
-        throw err; // Re-throw for the controller to handle
-    }
+  try {
+    // pg returns { rows, fields } object — not an array like mysql2
+    const result = await db.query('SELECT * FROM users');
+    return result.rows; // return all user rows
+  } catch (err) {
+    console.error('Database error in getAllCredentials:', err);
+    throw err;
+  }
 };
+
 const getUserByUsername = async (username) => {
-    try {
-        const [rows] = await db.query(
-            "SELECT user_id, username, passwordd FROM users WHERE username = ?",
-            [username]
-        );
-        return rows.length > 0 ? rows[0] : null;
-    } catch (err) {
-        console.error('Database error in getUserByUsername:', err);
-        throw err;
-    }
+  try {
+    // PostgreSQL uses $1, $2... as parameter placeholders
+    const result = await db.query(
+      'SELECT user_id, username, passwordd FROM users WHERE username = $1',
+      [username]
+    );
+    return result.rows.length > 0 ? result.rows[0] : null;
+  } catch (err) {
+    console.error('Database error in getUserByUsername:', err);
+    throw err;
+  }
 };
 
 module.exports = {
-    getAllCredentials,
-    getUserByUsername
+  getAllCredentials,
+  getUserByUsername,
 };

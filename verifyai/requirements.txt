@@ -1,5 +1,13 @@
-torch
 transformers
+torch
+numpy
+pandas
+opencv-python-headless
+Pillow
 pdfplumber
 docx2txt
-pillow
+requests
+tqdm
+protobuf
+PyYAML
+typing_extensions

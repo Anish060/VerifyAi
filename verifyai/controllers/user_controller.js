@@ -67,12 +67,7 @@ const addNewRecord = async (req, res) => {
             // instead of relying on a global 'data' object.
         };
 
-        // For this controller to work, the model function needs to be callable with data:
-        // const newRecord = await addData(recordData); 
         
-        // Since we can't modify the model here, we'll assume a global 'data' object is NOT used
-        // and that the model function signature is fixed, making this call problematic.
-        // For demonstration, let's assume 'addData' is adjusted to be:
         const newRecord = await addData(recordData);
         
         sendResponse(res, 201, { message: 'Verification record added successfully', recordId: newRecord.insertId });
@@ -90,9 +85,7 @@ const getAllRecords = async (req, res) => {
     try {
         const records = await getAllData(); // Maps to VerificationRecords table
         
-        // Transform the snake_case data from the DB to camelCase for the API response
-        // Note: The model's getAllCredentials doesn't show toCamelCase, but it's good practice.
-        // Assuming toCamelCase is used by the client or later in the stack.
+        
         
         sendResponse(res, 200, records);
     } catch (error) {
@@ -106,7 +99,7 @@ const getAllRecords = async (req, res) => {
  * Route: GET /api/verification/history
  */
 const getUserHistory = async (req, res) => {
-    // --- Manual Cookie Parsing (Implemented based on sample) ---
+   
     const cookies = parseCookies(req);
     const token = cookies.jwt; 
 
@@ -120,7 +113,7 @@ const getUserHistory = async (req, res) => {
     let userId;
 
     try {
-        // *** INSECURE DECODING (Project Requirement) ***
+       
         const decoded = jwt.decode(token);
         
         if (!decoded || typeof decoded.id === 'undefined') {
@@ -139,7 +132,7 @@ const getUserHistory = async (req, res) => {
         });
     }
 
-    // --- Database Logic ---
+    
     try {
         // This function name (getDataById) should ideally be getUserVerificationHistory
         const history = await getDataById(userId); 

@@ -10,9 +10,9 @@ import numpy as np
 import tempfile
 import os
 
-# --------------------------
+
 # TEXT EXTRACTION FUNCTIONS
-# --------------------------
+
 def extract_text_from_pdf(path):
     try:
         with pdfplumber.open(path) as pdf:
@@ -34,9 +34,9 @@ def extract_text_from_txt(path):
     except Exception as e:
         return f"[TXT extraction error: {str(e)}]"
 
-# --------------------------
+
 # AI TEXT DETECTION VIA GEMINI.JS
-# --------------------------
+
 def detect_ai_text_probability_gemini(text):
     try:
         # Call Gemini.js via Node.js
@@ -52,9 +52,9 @@ def detect_ai_text_probability_gemini(text):
     except Exception as e:
         return f"[Gemini API error: {str(e)}]"
 
-# --------------------------
+
 # IMAGE CLASSIFICATION
-# --------------------------
+
 def classify_image(image_path):
     try:
         classifier = pipeline("image-classification", model="google/vit-base-patch16-224")
@@ -64,9 +64,9 @@ def classify_image(image_path):
     except Exception as e:
         return f"[Image classification error: {str(e)}]"
 
-# --------------------------
+
 # DEEPFAKE DETECTION (IMAGE)
-# --------------------------
+
 def detect_deepfake_image(path):
     try:
         classifier = pipeline("image-classification", model="dima806/deepfake_vs_real_image_detection")
@@ -83,9 +83,9 @@ def detect_deepfake_image(path):
     except Exception as e:
         return f"[Deepfake detection error: {str(e)}]"
 
-# --------------------------
+
 # DEEPFAKE DETECTION (VIDEO)
-# --------------------------
+
 def detect_deepfake_video(video_path, frame_sample_rate=10, max_frames=30):
     """
     Extract frames from video, classify them as deepfake or real,
@@ -121,9 +121,6 @@ def detect_deepfake_video(video_path, frame_sample_rate=10, max_frames=30):
     except Exception as e:
         return f"[Video deepfake detection error: {str(e)}]"
 
-# --------------------------
-# MAIN EXECUTION
-# --------------------------
 def main():
     if len(sys.argv) != 3:
         print(json.dumps({"error": "Usage: python python_runner.py <filepath> <extension>"}))

@@ -1,37 +1,34 @@
-// userModel.js (CommonJS Module)
+// userModel.js (PostgreSQL Version - CommonJS)
 
-// Import the database connection using require()
+// Import PostgreSQL connection pool
 const db = require('../config/database.js'); 
-const { keysToCamelCase } = require('../utility/formatter.js'); 
-// Note: Assuming 'toCamelCase' is a utility function available via require or defined elsewhere.
-// const toCamelCase = require('../utils/toCamelCase'); // Uncomment if needed
+const { keysToCamelCase } = require('../utility/formatter.js');
 
 /**
  * Inserts a new verification record into the database.
  * @param {object} data - Object containing all record fields (userId, fileName, etc.).
  */
 const addData = async (data) => {
-    // SQL command to insert data into the VerificationRecords table
-    const sql = `
-        INSERT INTO verificationrecords (
-    user_id, 
-    file_name, 
-    upload_date, 
-    status, 
-    ai_score, 
-    human_score, 
-    deepfake_score, 
-    summary,
-    detailedExplanation,
-    metadataScore,
-    linguisticScore,
-    pixelInconsistencyScore,
-    sourceTokens
-) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);
-    `;
+  const sql = `
+    INSERT INTO verificationrecords (
+      user_id, 
+      file_name, 
+      upload_date, 
+      status, 
+      ai_score, 
+      human_score, 
+      deepfake_score, 
+      summary,
+      detailedExplanation,
+      metadataScore,
+      linguisticScore,
+      pixelInconsistencyScore,
+      sourceTokens
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+    RETURNING *;
+  `;
 
-    // Values array mapping directly to the placeholders in the SQL query
- const values = [
+  const values = [
     data.user_id, 
     data.file_name, 
     data.upload_date, 
@@ -45,24 +42,23 @@ const addData = async (data) => {
     data.linguisticScore,
     data.pixelInconsistencyScore,
     data.sourceTokens
-];
-    // Use await with the Promise-based query
-    const [result] = await db.query(sql, values);
-    return result;
+  ];
+
+  const result = await db.query(sql, values);
+  return result.rows[0]; // Return inserted record
 };
 
 /**
- * Retrieves all verification records from the database (potentially for admin use).
+ * Retrieves all verification records from the database.
  */
 const getAllData = async () => {
-    try {
-        // mysql2/promise returns [rows, fields] array
-        const [rows] = await db.query("SELECT * FROM verificationrecords");
-        return rows;
-    } catch (err) {
-        console.error('Database error in getAllCredentials:', err);
-        throw err; // Re-throw for the controller to handle
-    }
+  try {
+    const result = await db.query("SELECT * FROM verificationrecords;");
+    return result.rows;
+  } catch (err) {
+    console.error('Database error in getAllData:', err);
+    throw err;
+  }
 };
 
 /**
@@ -70,38 +66,26 @@ const getAllData = async () => {
  * @param {number} userId - The ID of the user whose records to fetch.
  */
 const getDataById = async (userId) => {
-    try {
-        // mysql2/promise returns [rows, fields] array
-        const [rows] = await db.query(
-            "SELECT * FROM verificationrecords WHERE user_id = ?",
-            [userId]
-        );
+  try {
+    const result = await db.query(
+      "SELECT * FROM verificationrecords WHERE user_id = $1;",
+      [userId]
+    );
 
-        // --- DEBUGGING LOG ADDED ---
-       
-        // --- END DEBUGGING LOG ---
-
-        if (rows.length === 0) {
-            // FIX 1: For history/list endpoints, return an empty array if no records are found.
-            // This prevents a 500 error on the client when a user is new.
-            return []; 
-        }
-
-        // FIX 2: Convert the entire array of rows, not just the first element.
-        // The keysToCamelCase utility is designed to handle arrays recursively.
-        return rows; 
-    } catch (err) {
-        // Use the function parameter 'userId' instead of an undefined 'id' variable in console.error
-        console.error(`Database error in getVerificationRecordsByUserId(${userId}):`, err); 
-        throw err; // Re-throw for the controller to handle
+    if (result.rows.length === 0) {
+      return []; // Return empty array if no records found
     }
+
+    return keysToCamelCase(result.rows);
+  } catch (err) {
+    console.error(`Database error in getDataById(${userId}):`, err);
+    throw err;
+  }
 };
 
-// Export the functions using module.exports (CommonJS)
+// Export functions
 module.exports = {
-    addData,
-    getAllData,
-    getDataById
+  addData,
+  getAllData,
+  getDataById
 };
-
-// Note: Removed the redundant `user_model` object wrapper as module.exports achieves the same goal.
