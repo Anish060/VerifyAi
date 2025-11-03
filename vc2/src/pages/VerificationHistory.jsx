@@ -11,7 +11,7 @@ const VerificationHistory = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
      const navigate = useNavigate();
-    const API_URL = "http://localhost:8080/api/user/history";
+    const API_URL = "https://verifyai-1.onrender.com/api/user/history";
 
     // --- Data Fetching Logic ---
     const fetchHistory = async () => {
@@ -136,7 +136,7 @@ const VerificationHistory = () => {
                             <a className="text-sm font-medium leading-normal text-primary font-bold border-b-2 border-primary pb-1" href="/hist">History</a>
                             <a className="text-sm font-medium leading-normal text-[#617589] hover:text-primary" href="#">Upload</a>
                         </nav>
-                        <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition duration-200"><span className="truncate">Logout</span></button>
+                        <a className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition duration-200" href='/'><span className="truncate">Logout</span></a>
                         <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 hidden sm:block" data-alt="User profile picture" style={{ backgroundImage: 'url("https://placehold.co/100x100/1173d4/ffffff?text=U")' }}></div>
                     </div>
                 </header>
