@@ -12,39 +12,52 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 8080;
 
-// ✅ 1. Allow multiple frontend origins (Vercel + local)
-const corsOptions = {
-  origin: [
-    'http://localhost:5173',
-    'https://verify-ai-lake.vercel.app',
-  ],
-  credentials: true, // ✅ Important for cookies (JWTs)
-};
+// ✅ Allowed frontend origins
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://verify-ai-lake.vercel.app',
+];
 
-// ✅ 2. Apply CORS before routes
-app.use(cors(corsOptions));
+// ✅ Preflight Middleware (fixes the CORS login issue)
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
 
-// ✅ 3. Allow Express to trust Render’s proxy (needed for HTTPS cookies)
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+  }
+
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200); // ✅ respond to browser preflight
+  }
+
+  next();
+});
+
+// ✅ Trust Render proxy (for secure cookies)
 app.set('trust proxy', 1);
 
-// ✅ 4. Middleware setup
+// ✅ Parsing middlewares
 app.use(express.json());
 app.use(cookieParserMiddleware);
 
-// ✅ 5. Multer file uploads
+// ✅ Multer upload
 const upload = multer({ dest: 'uploads/' });
 
-// ✅ 6. API routes
+// ✅ Routes
 app.use('/api/detect', upload.single('file'), detectRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/auth', auth);
 
-// ✅ 7. Default route
+// ✅ Health route
 app.get('/', (req, res) => {
-  res.send('VerifyAI backend is running 🚀');
+  res.send('VerifyAI backend is running ✅');
 });
 
-// ✅ 8. Start server
+// ✅ Start server
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`🚀 Server live on port ${port}`);
 });
