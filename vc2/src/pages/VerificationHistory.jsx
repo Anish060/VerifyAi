@@ -218,7 +218,7 @@ const VerificationHistory = () => {
   navigate("/VR", {
     state: {
       verificationResult: {
-        aiScore: record.ai_score,
+        aiScore: record.ai_score ?? record.aiScore ?? 0,
         deepfakeScore: record.deepfake_score,
         fileSize: record.fileSize,
         fileType: record.fileType,
