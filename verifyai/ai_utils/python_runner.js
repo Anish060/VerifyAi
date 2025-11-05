@@ -9,7 +9,7 @@ exports.runPythonDetection = (filePath, ext) => {
     });
 
     process.on('close', () => {
-      const py = spawn('python3', ['ai_utils/python_runner.py', filePath, ext]);
+      const py = spawn('python', ['ai_utils/python_runner.py', filePath, ext]);
 
       let output = '';
       py.stdout.on('data', data => output += data);

@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "https://verifyai-1.onrender.com/api/detect";
+const API_URL = "http://localhost:8080/api/detect";
 axios.defaults.withCredentials = true;
 
 const Dashboard = () => {

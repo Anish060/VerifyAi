@@ -19,23 +19,17 @@ const allowedOrigins = [
 ];
 
 // ✅ Preflight Middleware (fixes the CORS login issue)
+app.set("trust proxy", 1);
+
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-
-  if (allowedOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin);
-  }
-
+  res.header("Access-Control-Allow-Origin", req.headers.origin);
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200); // ✅ respond to browser preflight
-  }
-
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  if (req.method === "OPTIONS") return res.sendStatus(200);
   next();
 });
+
 
 // ✅ Trust Render proxy (for secure cookies)
 app.set('trust proxy', 1);

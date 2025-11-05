@@ -11,7 +11,7 @@ const VerificationHistory = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
      const navigate = useNavigate();
-    const API_URL = "https://verifyai-1.onrender.com/api/user/history";
+    const API_URL = "http://localhost:8080/api/user/history";
 
     // --- Data Fetching Logic ---
     const fetchHistory = async () => {
