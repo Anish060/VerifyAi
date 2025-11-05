@@ -212,31 +212,30 @@ const VerificationHistory = () => {
                                                                 </td>
                                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                                     <a className="text-primary hover:text-primary/80 transition duration-150 mr-4" 
-                                                                    onClick={() => {
-    // Assuming 'record' is your history item from the API
-    const verificationResult = {
-      aiScore: record.ai_score || 0,
-      deepfakeScore: record.deepfake_score || 0,
-      imageAnalysis: record.imageAnalysis || {},
-      fileSize: record.fileSize || 0,
-      fileType: record.fileType || "Unknown",
-      source: record.sourceTokens || "Unknown",
-      summary: record.summary || "No summary available",
-      detailedExplanation: record.detailedExplanation || "No details available",
-      metadataScore: record.metadataScore || 0,
-      linguisticScore: record.linguisticScore || 0,
-      pixelInconsistencyScore: record.pixelInconsistencyScore || 0,
-      analysisDetails: record.analysis_Details || {},
-    };
-                                                                        
-    // Use the full record object from API
-    navigate("/VR", {
-      state: {
-        verificationResult, // make sure this is the full object from backend
-        uploadedFileName: record.file_name || record.fileName,
+                                                                   onClick={() => {
+                                                                    console.log("Sending record to details:", record);
+
+  navigate("/VR", {
+    state: {
+      verificationResult: {
+        aiScore: record.ai_score,
+        deepfakeScore: record.deepfake_score,
+        fileSize: record.fileSize,
+        fileType: record.fileType,
+        summary: record.summary,
+        detailedExplanation: record.detaileddetails || record.detailedexplanation || record.detailedExplanation,
+        metadataScore: record.metadatascore,
+        linguisticScore: record.linguisticscore,
+        pixelInconsistencyScore: record.pixelinconsistencyscore,
+        source: record.sourcetokens,
+        analysisDetails: record.analysis_details,
+        imageAnalysis: record.imageanalysis // if exists
       },
-    });
-  }}
+      uploadedFileName: record.file_name,
+    },
+  });
+}}
+
                                                                     >View Details
                                                                     
                                                                     </a>
