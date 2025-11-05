@@ -19,7 +19,7 @@ MODEL_DEEPFAKE = None
 
 # ✅ Use Lightweight models (stable for free tier)
 IMAGE_MODEL_NAME = "microsoft/resnet-18"  # small lightweight CNN
-DEEPFAKE_MODEL_NAME = "melfm/dfdc_deepfake_detection"
+DEEPFAKE_MODEL_NAME = "dima806/deepfake_vs_real_image_detection"
 
 # -------- Text Extraction --------
 
