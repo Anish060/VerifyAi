@@ -9,7 +9,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   axios.defaults.withCredentials = true;
-  const API_URL = 'https://verifyai-1.onrender.comapi/auth/login'; // Adjust to your backend URL
+  const API_URL = 'https://verifyai-1.onrender.com/api/auth/login'; // Adjust to your backend URL
 
     const handleLogin = async (e) => {
         e.preventDefault();
