@@ -7,50 +7,47 @@ const userRoutes = require('./routes/user.js');
 const auth = require('./routes/auth.js');
 
 dotenv.config();
+
 const app = express();
 const port = process.env.PORT || 8080;
 
-// ✅ 1. Allowed Origins
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://verify-ai-lake.vercel.app',
-];
-
-// ✅ 2. CORS + Preflight Handler FIRST (before multer)
+// ✅ TRUST PROXY (for Render cookies)
 app.set("trust proxy", 1);
 
+// ✅ UNIVERSAL CORS FIX — allow any origin (works for demo day)
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin) || !origin) {
-    res.header("Access-Control-Allow-Origin", origin || "*");
+
+  const origin = req.headers.origin || "*";
+  res.setHeader("Access-Control-Allow-Origin", origin);
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+
+  // ✅ Preflight fast exit
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
   }
 
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-
-  if (req.method === "OPTIONS") return res.sendStatus(200);
   next();
 });
 
-// ✅ 3. Middlewares
+// ✅ Body + Cookies
 app.use(express.json());
 app.use(cookieParserMiddleware);
 
-// ✅ 4. Multer setup (AFTER CORS)
+// ✅ Multer AFTER CORS
 const upload = multer({ dest: 'uploads/' });
 
-// ✅ 5. Routes
+// ✅ ROUTES (MUST COME AFTER CORS + MULTER)
 app.use('/api/detect', upload.single('file'), detectRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/auth', auth);
 
-// ✅ 6. Health route
+// ✅ Health route
 app.get('/', (req, res) => {
-  res.send('VerifyAI backend is running ✅');
+  res.send('✅ VerifyAI backend live');
 });
 
-// ✅ 7. Start Server
 app.listen(port, () => {
-  console.log(`🚀 Server live on port ${port}`);
+  console.log(`🚀 Server running on port ${port}`);
 });
