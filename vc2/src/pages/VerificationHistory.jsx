@@ -77,7 +77,7 @@ const VerificationHistory = () => {
                 aiScoreText = `${aiScore}% Authentic`;
             }
 
-            if (deepfakeScore > 50) {
+            if (deepfakeScore > 20) {
                 deepfakeScoreColor = "red";
                 deepfakeScoreText = `${deepfakeScore}% Deepfake`;
             } else {
