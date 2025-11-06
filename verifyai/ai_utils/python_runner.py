@@ -9,20 +9,25 @@ import cv2
 import numpy as np
 import torch
 import gc
+import google.generativeai as genai
+import io
+
+# ----------------------------
+# Gemini API Configuration
+# ----------------------------
+genai.configure(api_key="AIzaSyCNsyTGmTQMEph4CK39AyLYb4qI7XEAQU4")  
+# Replace with your key
 
 # Reduce CPU threads to avoid Render crash
 torch.set_num_threads(1)
 
 # -------- Model Cache (load once) --------
 MODEL_IMAGE = None
-MODEL_DEEPFAKE = None
 
 # ✅ Use Lightweight models (stable for free tier)
 IMAGE_MODEL_NAME = "microsoft/resnet-18"  # small lightweight CNN
-DEEPFAKE_MODEL_NAME = "dima806/deepfake_vs_real_image_detection"
 
 # -------- Text Extraction --------
-
 def extract_text_from_pdf(path):
     try:
         with pdfplumber.open(path) as pdf:
@@ -59,69 +64,77 @@ def detect_ai_text_probability_gemini(text):
     except Exception as e:
         return f"[Gemini API error: {str(e)}]"
 
-# -------- Image AI Detection --------
+# -------- Image Classification (General type detection) --------
 def classify_image(image_path):
     global MODEL_IMAGE
     try:
-        # Load model only once
         if MODEL_IMAGE is None:
             MODEL_IMAGE = pipeline("image-classification", model=IMAGE_MODEL_NAME)
-
         img = Image.open(image_path).convert("RGB")
         result = MODEL_IMAGE(img)[0]
-        return f"{result['label']} ({result['score']*100:.2f}%)"
+        return f"{result['label']} ({result['score'] * 100:.2f}%)"
     except Exception as e:
         return f"[Image classification error: {str(e)}]"
 
-# -------- Deepfake Detection for Image --------
+# -------- Gemini Deepfake Detection (Image) --------
 def detect_deepfake_image(path):
-    global MODEL_DEEPFAKE
     try:
-        if MODEL_DEEPFAKE is None:
-            MODEL_DEEPFAKE = pipeline("image-classification", model=DEEPFAKE_MODEL_NAME)
+        model = genai.GenerativeModel("gemini-2.5-flash")
 
-        img = Image.open(path).convert("RGB")
-        result = MODEL_DEEPFAKE(img)[0]
-        label = result["label"].lower()
-        score = result["score"] * 100
+        with open(path, "rb") as f:
+            img_bytes = f.read()
 
-        if "fake" in label:
-            return round(score, 2)
-        return round(100 - score, 2)
+        prompt = """
+You are an advanced deepfake forensic AI. Analyze whether this image is real or a deepfake.
+
+Return ONLY a valid JSON in this exact format:
+{
+  "label": "real" | "fake" | "uncertain",
+  "confidence": (number between 0 and 100)
+}
+"""
+
+        response = model.generate_content([
+            {"role": "user", "parts": [prompt, {"mime_type": "image/jpeg", "data": img_bytes}]}
+        ])
+
+        text = response.text.strip()
+        if text.startswith("```"):
+            text = text.replace("```json", "").replace("```", "").strip()
+
+        try:
+            data = json.loads(text)
+        except:
+            return 50  # fallback if Gemini returns non-JSON
+
+        confidence = float(data.get("confidence", 50))
+        label = data.get("label", "uncertain").lower()
+
+        if label == "fake":
+            return round(confidence, 2)
+        elif label == "real":
+            return round(100 - confidence, 2)
+        else:
+            return 50
     except Exception as e:
-        return f"[Deepfake detection error: {str(e)}]"
+        return f"[Gemini Deepfake Detection Error: {str(e)}]"
 
-# -------- Deepfake Detection for Video --------
-def detect_deepfake_video(path, max_frames=5):
-    global MODEL_DEEPFAKE
+# -------- Gemini Deepfake Detection (Video) --------
+def detect_deepfake_video(path):
     try:
-        if MODEL_DEEPFAKE is None:
-            MODEL_DEEPFAKE = pipeline("image-classification", model=DEEPFAKE_MODEL_NAME)
-
         cap = cv2.VideoCapture(path)
         total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        frames = np.linspace(0, total-1, max_frames, dtype=int)
+        mid = total // 2
+        cap.set(cv2.CAP_PROP_POS_FRAMES, mid)
+        ret, frame = cap.read()
+        if not ret:
+            return 50
 
-        scores = []
-        for i in frames:
-            cap.set(cv2.CAP_PROP_POS_FRAMES, i)
-            ret, frame = cap.read()
-            if not ret: continue
-            img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-            result = MODEL_DEEPFAKE(img)[0]
-            label = result["label"].lower()
-            score = result["score"] * 100
-            if "fake" in label:
-                scores.append(score)
-            else:
-                scores.append(100 - score)
-
-        cap.release()
-        if not scores:
-            return "[Video deepfake detection error]"
-        return round(float(np.mean(scores)), 2)
+        frame_path = path + "_frame.jpg"
+        cv2.imwrite(frame_path, frame)
+        return detect_deepfake_image(frame_path)
     except Exception as e:
-        return f"[Video deepfake detection error: {str(e)}]"
+        return f"[Video Deepfake Detection Error: {str(e)}]"
 
 # -------- Main --------
 def main():
@@ -134,35 +147,37 @@ def main():
 
     try:
         if ext == "pdf":
-            text = extract_text_from_pdf(path); result["text"]=text
-            result["ai_score"]=detect_ai_text_probability_gemini(text)
+            text = extract_text_from_pdf(path)
+            result["text"] = text
+            result["ai_score"] = detect_ai_text_probability_gemini(text)
 
         elif ext == "docx":
-            text = extract_text_from_docx(path); result["text"]=text
-            result["ai_score"]=detect_ai_text_probability_gemini(text)
+            text = extract_text_from_docx(path)
+            result["text"] = text
+            result["ai_score"] = detect_ai_text_probability_gemini(text)
 
         elif ext == "txt":
-            text = extract_text_from_txt(path); result["text"]=text
-            result["ai_score"]=detect_ai_text_probability_gemini(text)
+            text = extract_text_from_txt(path)
+            result["text"] = text
+            result["ai_score"] = detect_ai_text_probability_gemini(text)
 
-        elif ext in ["jpg","jpeg","png"]:
+        elif ext in ["jpg", "jpeg", "png"]:
             result["text"] = "[Image File]"
             result["image"] = classify_image(path)
             result["deepfake"] = detect_deepfake_image(path)
 
-        elif ext in ["mp4","mov","avi","mkv"]:
+        elif ext in ["mp4", "mov", "avi", "mkv"]:
             result["text"] = "[Video File]"
             result["deepfake"] = detect_deepfake_video(path)
 
         else:
-            result["text"]="[Unsupported file type]"
+            result["text"] = "[Unsupported file type]"
 
         print(json.dumps(result))
 
     except Exception as e:
         print(json.dumps({"error": str(e)}))
 
-    # ✅ Free RAM
     gc.collect()
 
 if __name__ == "__main__":

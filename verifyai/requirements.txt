@@ -11,3 +11,6 @@ tqdm
 protobuf
 PyYAML
 typing_extensions
+google-generativeai
+tokenizers
+sentencepiece
