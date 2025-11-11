@@ -36,17 +36,17 @@ const Login = () => {
   return (
     <div className="relative text-gray-800 font-sans min-h-screen flex flex-col items-center justify-center overflow-hidden">
 
-      {/* 🌊 Enhanced Animated Gradient Background */}
+      {/* 🌊 Enhanced Pulsing Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-white via-blue-50 to-blue-100 overflow-hidden">
-        {/* Primary flowing wave layer */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_30%,rgba(99,175,255,0.7),transparent_70%)] animate-wave-1"></div>
-        {/* Secondary wave layer for depth */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_60%,rgba(40,120,255,0.5),transparent_70%)] animate-wave-2"></div>
-        {/* Subtle soft highlight */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.4),transparent_70%)] mix-blend-overlay animate-wave-3"></div>
+        {/* Layer 1 – main soft wave */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_25%_35%,rgba(99,175,255,0.65),transparent_70%)] animate-wave-1"></div>
+        {/* Layer 2 – deeper blue wave */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_75%_65%,rgba(40,120,255,0.55),transparent_70%)] animate-wave-2"></div>
+        {/* Layer 3 – white highlight pulse */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.5),transparent_70%)] mix-blend-overlay animate-wave-3"></div>
       </div>
 
-      {/* Header (unchanged) */}
+      {/* Header (same as before) */}
       <header className="absolute top-0 left-0 right-0 p-6 flex justify-between items-center z-10">
         <div className="flex items-center gap-2">
           <h1 className="text-2xl font-bold text-gray-800">VerifyAI</h1>
@@ -147,38 +147,40 @@ const Login = () => {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="absolute bottom-0 left-0 right-0 p-6 text-center text-gray-500 text-sm z-10">
         <a className="hover:text-blue-600" href="#">Terms of Service</a>
         <span className="mx-2">·</span>
         <a className="hover:text-blue-600" href="#">Privacy Policy</a>
       </footer>
 
-      {/* 🌫️ Wave Animation */}
+      {/* 💫 More dynamic wave animation */}
       <style>{`
-        @keyframes wave1 {
-          0% { transform: translate(0%, 0%) scale(1); }
-          50% { transform: translate(-3%, -4%) scale(1.08); }
-          100% { transform: translate(0%, 0%) scale(1); }
+        @keyframes wavePulse1 {
+          0% { transform: translate(-8%, -5%) scale(1.05); opacity: 0.6; }
+          50% { transform: translate(8%, 5%) scale(1.12); opacity: 0.85; }
+          100% { transform: translate(-8%, -5%) scale(1.05); opacity: 0.6; }
         }
-        @keyframes wave2 {
-          0% { transform: translate(0%, 0%) scale(1); }
-          50% { transform: translate(4%, 3%) scale(1.05); }
-          100% { transform: translate(0%, 0%) scale(1); }
+
+        @keyframes wavePulse2 {
+          0% { transform: translate(5%, 10%) scale(1.03); opacity: 0.5; }
+          50% { transform: translate(-5%, -10%) scale(1.1); opacity: 0.8; }
+          100% { transform: translate(5%, 10%) scale(1.03); opacity: 0.5; }
         }
-        @keyframes wave3 {
-          0% { opacity: 0.4; transform: translateY(0); }
-          50% { opacity: 0.8; transform: translateY(-10px); }
-          100% { opacity: 0.4; transform: translateY(0); }
+
+        @keyframes wavePulse3 {
+          0% { transform: translateY(0px); opacity: 0.3; }
+          50% { transform: translateY(-20px); opacity: 0.8; }
+          100% { transform: translateY(0px); opacity: 0.3; }
         }
+
         .animate-wave-1 {
-          animation: wave1 18s ease-in-out infinite;
+          animation: wavePulse1 15s ease-in-out infinite alternate;
         }
         .animate-wave-2 {
-          animation: wave2 25s ease-in-out infinite;
+          animation: wavePulse2 20s ease-in-out infinite alternate-reverse;
         }
         .animate-wave-3 {
-          animation: wave3 12s ease-in-out infinite;
+          animation: wavePulse3 10s ease-in-out infinite alternate;
         }
       `}</style>
     </div>
