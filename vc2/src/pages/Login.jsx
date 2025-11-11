@@ -36,10 +36,14 @@ const Login = () => {
   return (
     <div className="relative text-gray-800 font-sans min-h-screen flex flex-col items-center justify-center overflow-hidden">
 
-      {/* 🌊 Animated soft background (DeepSeek style) */}
+      {/* 🌊 Enhanced Animated Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-white via-blue-50 to-blue-100 overflow-hidden">
-        <div className="absolute inset-0 opacity-70 bg-[radial-gradient(ellipse_at_30%_40%,rgba(99,175,255,0.4),transparent_70%)] animate-bg-move"></div>
-        <div className="absolute inset-0 opacity-60 bg-[radial-gradient(ellipse_at_70%_60%,rgba(175,210,255,0.5),transparent_70%)] animate-bg-move-delayed"></div>
+        {/* Primary flowing wave layer */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_30%,rgba(99,175,255,0.7),transparent_70%)] animate-wave-1"></div>
+        {/* Secondary wave layer for depth */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_60%,rgba(40,120,255,0.5),transparent_70%)] animate-wave-2"></div>
+        {/* Subtle soft highlight */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.4),transparent_70%)] mix-blend-overlay animate-wave-3"></div>
       </div>
 
       {/* Header (unchanged) */}
@@ -150,19 +154,31 @@ const Login = () => {
         <a className="hover:text-blue-600" href="#">Privacy Policy</a>
       </footer>
 
-      {/* 🌀 Smooth Wave Animation Styles */}
+      {/* 🌫️ Wave Animation */}
       <style>{`
-        @keyframes bgMove {
-          0% { transform: translate(0, 0) scale(1); }
-          50% { transform: translate(-2%, -2%) scale(1.05); }
-          100% { transform: translate(0, 0) scale(1); }
+        @keyframes wave1 {
+          0% { transform: translate(0%, 0%) scale(1); }
+          50% { transform: translate(-3%, -4%) scale(1.08); }
+          100% { transform: translate(0%, 0%) scale(1); }
         }
-        .animate-bg-move {
-          animation: bgMove 20s ease-in-out infinite;
+        @keyframes wave2 {
+          0% { transform: translate(0%, 0%) scale(1); }
+          50% { transform: translate(4%, 3%) scale(1.05); }
+          100% { transform: translate(0%, 0%) scale(1); }
         }
-        .animate-bg-move-delayed {
-          animation: bgMove 25s ease-in-out infinite;
-          animation-delay: 5s;
+        @keyframes wave3 {
+          0% { opacity: 0.4; transform: translateY(0); }
+          50% { opacity: 0.8; transform: translateY(-10px); }
+          100% { opacity: 0.4; transform: translateY(0); }
+        }
+        .animate-wave-1 {
+          animation: wave1 18s ease-in-out infinite;
+        }
+        .animate-wave-2 {
+          animation: wave2 25s ease-in-out infinite;
+        }
+        .animate-wave-3 {
+          animation: wave3 12s ease-in-out infinite;
         }
       `}</style>
     </div>
