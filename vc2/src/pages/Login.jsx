@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -9,100 +10,72 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   axios.defaults.withCredentials = true;
-  const API_URL = 'https://verifyai-1.onrender.com/api/auth/login'; // Adjust to your backend URL
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        setError(''); // Clear previous errors
+  const API_URL = 'https://verifyai-1.onrender.com/api/auth/login';
 
-        try {
-            // 1. Send login credentials to the backend
-            const response = await axios.post(
-  API_URL,
-  {
-    username: email, // backend expects 'username'
-    password: password,
-  },
-  {
-    withCredentials: true, // ✅ allows browser to store JWT cookie
-  }
-);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError('');
 
+    try {
+      const response = await axios.post(API_URL, {
+        username: email,
+        password,
+      }, { withCredentials: true });
 
-            // The backend should handle verification and SET THE JWT COOKIE
-            // in the response header (Set-Cookie: jwt=...). 
-            // Axios handles this automatically in the background.
-
-            if (response.status === 200 || response.data.success) {
-                console.log('Login successful:', response.data);
-                
-                // 2. Navigate to the dashboard on success
-                navigate('/Dash'); 
-
-            } else {
-                // This block typically won't be hit unless the backend returns a 200 
-                // status code with an explicit 'success: false' payload.
-                setError(response.data.message || 'Login failed. Please check credentials.');
-            }
-        } catch (err) {
-            // 3. Handle network errors or non-200 status codes (like 401 Unauthorized)
-            if (err.response) {
-                // Server responded with a status code outside the 2xx range
-                setError(err.response.data.message || 'Invalid email or password.');
-            } else if (err.request) {
-                // Request was made but no response received (server down/blocked)
-                setError('Cannot connect to the server.');
-            } else {
-                // Something else happened
-                setError('An unexpected error occurred during login.');
-            }
-            console.error('Login error:', err);
-        }
-    };
+      if (response.status === 200 || response.data.success) {
+        navigate('/Dash');
+      } else {
+        setError(response.data.message || 'Login failed. Please check credentials.');
+      }
+    } catch (err) {
+      if (err.response) setError(err.response.data.message || 'Invalid email or password.');
+      else if (err.request) setError('Cannot connect to the server.');
+      else setError('An unexpected error occurred during login.');
+    }
+  };
 
   return (
-    // Use a light background color for the overall page body
-    <div className="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col items-center justify-center relative">
-      {/* Header - Adjusted for the light background and color scheme */}
-      <header className="absolute top-0 left-0 right-0 p-6 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          {/* Removed the 'verified_user' icon and h1 for 'VerifyAI' from the left to match the reference image */}
-          <h1 className="text-2xl font-bold text-gray-800">VerifyAI</h1>
-        </div>
-        <div className="flex items-center gap-4">
-          {/* 'Login' link style adjusted to be less emphasized, matching the reference image */}
-          <a className="text-gray-600 hover:text-blue-500" href="#">
-            Login
-          </a>
-          {/* 'Register' button style adjusted to match the light blue background of the reference image */}
-          <a
-            className="px-4 py-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200"
-            href="#"
-          >
-            Register
-          </a>
-        </div>
-      </header>
+    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+      {/* ✨ Animated gradient background like DeepSeek */}
+      <div className="absolute inset-0 bg-[conic-gradient(at_bottom_right,_var(--tw-gradient-stops))] from-blue-700 via-purple-700 to-indigo-600 animate-gradient"></div>
 
-      {/* Main Login Form - Background set to white with a subtle shadow */}
-      <main className="w-full max-w-md p-8 bg-white rounded-xl shadow-xl space-y-6">
+      {/* 🪶 Floating particle lights */}
+      <div className="absolute inset-0 overflow-hidden z-0">
+        {[...Array(10)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-white/10 blur-2xl animate-float"
+            style={{
+              width: `${Math.random() * 150 + 80}px`,
+              height: `${Math.random() * 150 + 80}px`,
+              top: `${Math.random() * 90}%`,
+              left: `${Math.random() * 90}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${Math.random() * 10 + 10}s`,
+            }}
+          ></div>
+        ))}
+      </div>
+
+      {/* Overlay for dimming effect */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-0"></div>
+
+      {/* 🌟 Main Login Form */}
+      <main className="relative z-10 w-full max-w-md p-8 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl space-y-6 border border-white/40">
         <div className="text-center">
-          <h2 className="text-3xl font-bold leading-tight tracking-normal text-gray-800">
-            Welcome Back!
-          </h2>
-          <p className="text-gray-500 text-base font-normal leading-normal">
-            Log in to your account to continue
-          </p>
+          <h2 className="text-3xl font-bold text-gray-900">Welcome Back!</h2>
+          <p className="text-gray-500">Log in to your VerifyAI account</p>
         </div>
 
         <form className="space-y-4" onSubmit={handleLogin}>
           {/* Email */}
           <label className="flex flex-col">
-            <p className="text-sm font-medium leading-normal pb-1 text-gray-700">Email</p>
+            <p className="text-sm font-medium text-gray-700">Email</p>
             <input
               type="email"
               placeholder="your.email@example.com"
-              className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 focus:outline-0 focus:ring-2 focus:ring-blue-500/50 border border-gray-300 bg-white focus:border-blue-500 h-12 placeholder:text-gray-400 p-3 text-base font-normal leading-normal"
+              className="rounded-lg border border-gray-300 bg-white/80 h-12 px-3 text-base text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -111,21 +84,21 @@ const Login = () => {
 
           {/* Password */}
           <label className="flex flex-col">
-            <p className="text-sm font-medium leading-normal pb-1 text-gray-700">Password</p>
-            <div className="flex w-full flex-1 items-stretch rounded-lg">
+            <p className="text-sm font-medium text-gray-700">Password</p>
+            <div className="flex items-stretch rounded-lg border border-gray-300 bg-white/80">
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
-                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-lg text-gray-800 focus:outline-0 focus:ring-2 focus:ring-blue-500/50 border border-gray-300 bg-white focus:border-blue-500 h-12 placeholder:text-gray-400 p-3 pr-2 text-base font-normal leading-normal"
+                className="flex-1 h-12 px-3 text-gray-900 focus:outline-none"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
               <div
-                className="text-gray-500 flex border border-gray-300 bg-white items-center justify-center pr-3 rounded-r-lg border-l-0 cursor-pointer"
+                className="flex items-center justify-center px-3 text-gray-500 cursor-pointer hover:text-blue-500 transition"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                <span className="material-symbols-outlined text-xl">
+                <span className="material-symbols-outlined">
                   {showPassword ? "visibility" : "visibility_off"}
                 </span>
               </div>
@@ -133,68 +106,79 @@ const Login = () => {
           </label>
 
           {/* Remember Me & Forgot */}
-          <div className="flex justify-between items-center">
-            <label className="flex gap-x-2 flex-row items-center">
+          <div className="flex justify-between items-center text-sm">
+            <label className="flex items-center gap-2">
               <input
                 type="checkbox"
                 checked={rememberMe}
                 onChange={() => setRememberMe(!rememberMe)}
-                // Checkbox colors adjusted to a simple blue theme
-                className="h-4 w-4 rounded border-gray-400 border bg-white text-blue-500 checked:bg-blue-500 checked:border-blue-500 focus:ring-0 focus:ring-offset-0 focus:border-blue-500/50"
+                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
-              <p className="text-sm font-normal leading-normal text-gray-700">Remember Me</p>
+              <span>Remember me</span>
             </label>
-            <a className="text-sm text-blue-500 hover:text-blue-700" href="#">
+            <a href="#" className="text-blue-500 hover:text-blue-700">
               Forgot Password?
             </a>
           </div>
 
-          {/* Log In Button - Crucial change to a solid, more vivid blue */}
+          {/* Login Button */}
           <button
             type="submit"
-            // Using a standard Tailwind blue, adjust this to your specific primary color if needed
-            className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-blue-600 text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-blue-700 transition-all duration-200"
+            className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-all duration-200"
           >
             Log In
           </button>
+
+          {/* Error Message */}
+          {error && (
+            <p className="text-center text-red-500 text-sm font-medium mt-2">
+              {error}
+            </p>
+          )}
         </form>
 
-        {/* Or continue with */}
-        <div className="relative flex py-2 items-center">
-          <div className="flex-grow border-t border-gray-300"></div>
-          <span className="flex-shrink mx-4 text-gray-500 text-sm">
-            Or continue with:
-          </span>
-          <div className="flex-grow border-t border-gray-300"></div>
+        {/* Divider */}
+        <div className="flex items-center my-4">
+          <hr className="flex-grow border-gray-300" />
+          <span className="mx-2 text-gray-500 text-sm">Or continue with</span>
+          <hr className="flex-grow border-gray-300" />
         </div>
 
-        {/* Social Buttons - Adjusted border/text colors and removed broken image sources */}
+        {/* Social Buttons */}
         <div className="grid grid-cols-2 gap-4">
-          <button className="flex items-center justify-center gap-2 w-full border border-gray-300 rounded-lg py-3 hover:bg-gray-100 transition-all duration-200 text-gray-700 font-medium">
-            {/* Replaced broken image source with a generic icon placeholder or text to maintain the layout */}
-            <span className="text-red-500 text-lg font-bold">G</span> 
-            <span>Google</span>
+          <button className="flex items-center justify-center gap-2 py-3 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
+            <span className="text-red-500 font-bold">G</span> Google
           </button>
-          <button className="flex items-center justify-center gap-2 w-full border border-gray-300 rounded-lg py-3 hover:bg-gray-100 transition-all duration-200 text-gray-700 font-medium">
-            {/* Replaced broken image source with a generic icon placeholder or text to maintain the layout */}
-            <span className="text-green-600 text-lg font-bold">M</span>
-            <span>Microsoft</span>
+          <button className="flex items-center justify-center gap-2 py-3 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
+            <span className="text-green-600 font-bold">M</span> Microsoft
           </button>
         </div>
       </main>
 
-      {/* Footer - Adjusted colors to match the subtle text at the bottom */}
-      <footer className="absolute bottom-0 left-0 right-0 p-6 text-center">
-        <div className="text-gray-500 text-sm">
-          <a className="hover:text-blue-500" href="#">
-            Terms of Service
-          </a>
-          <span className="mx-2">·</span>
-          <a className="hover:text-blue-500" href="#">
-            Privacy Policy
-          </a>
-        </div>
+      {/* Footer */}
+      <footer className="absolute bottom-4 text-gray-300 text-xs z-10">
+        © {new Date().getFullYear()} VerifyAI. All rights reserved.
       </footer>
+
+      {/* 🌀 Custom Animations */}
+      <style>{`
+        @keyframes gradientMove {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .animate-gradient {
+          background-size: 200% 200%;
+          animation: gradientMove 10s ease infinite;
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) scale(1); opacity: 0.4; }
+          50% { transform: translateY(-20px) scale(1.05); opacity: 0.8; }
+        }
+        .animate-float {
+          animation: float 15s ease-in-out infinite;
+        }
+      `}</style>
     </div>
   );
 };
