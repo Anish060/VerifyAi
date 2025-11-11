@@ -22,7 +22,6 @@ const Login = () => {
       }, { withCredentials: true });
 
       if (response.status === 200 || response.data.success) {
-        console.log('Login successful:', response.data);
         navigate('/Dash');
       } else {
         setError(response.data.message || 'Login failed. Please check credentials.');
@@ -31,56 +30,40 @@ const Login = () => {
       if (err.response) setError(err.response.data.message || 'Invalid email or password.');
       else if (err.request) setError('Cannot connect to the server.');
       else setError('An unexpected error occurred during login.');
-      console.error('Login error:', err);
     }
   };
 
   return (
-    // ✅ Replaced gray background with animated gradient
     <div className="relative text-gray-800 font-sans min-h-screen flex flex-col items-center justify-center overflow-hidden">
-      
-      {/* ✨ Animated gradient background layer */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-700 via-purple-700 to-indigo-700 bg-[length:200%_200%] animate-gradient"></div>
 
-      {/* 💫 Floating glow particles */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(10)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full bg-white/10 blur-2xl animate-float"
-            style={{
-              width: `${Math.random() * 120 + 60}px`,
-              height: `${Math.random() * 120 + 60}px`,
-              top: `${Math.random() * 90}%`,
-              left: `${Math.random() * 90}%`,
-              animationDelay: `${Math.random() * 8}s`,
-            }}
-          ></div>
-        ))}
+      {/* 🌊 Animated soft background (DeepSeek style) */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white via-blue-50 to-blue-100 overflow-hidden">
+        <div className="absolute inset-0 opacity-70 bg-[radial-gradient(ellipse_at_30%_40%,rgba(99,175,255,0.4),transparent_70%)] animate-bg-move"></div>
+        <div className="absolute inset-0 opacity-60 bg-[radial-gradient(ellipse_at_70%_60%,rgba(175,210,255,0.5),transparent_70%)] animate-bg-move-delayed"></div>
       </div>
 
-      {/* Overlay dimming for readability */}
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
-
-      {/* ✅ Keep your original header and login form */}
+      {/* Header (unchanged) */}
       <header className="absolute top-0 left-0 right-0 p-6 flex justify-between items-center z-10">
         <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-bold text-white drop-shadow-lg">VerifyAI</h1>
+          <h1 className="text-2xl font-bold text-gray-800">VerifyAI</h1>
         </div>
         <div className="flex items-center gap-4">
-          <a className="text-gray-200 hover:text-blue-300" href="#">Login</a>
-          <a className="px-4 py-2 rounded-lg bg-blue-200/30 text-white border border-blue-300 hover:bg-blue-300/40 backdrop-blur-sm" href="#">
+          <a className="text-gray-600 hover:text-blue-600 transition" href="#">
+            Login
+          </a>
+          <a
+            className="px-4 py-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 transition"
+            href="#"
+          >
             Register
           </a>
         </div>
       </header>
 
       {/* Main Login Form */}
-      <main className="relative z-10 w-full max-w-md p-8 bg-white/90 backdrop-blur-xl rounded-xl shadow-xl space-y-6 border border-white/40">
+      <main className="relative z-10 w-full max-w-md p-8 bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl space-y-6 border border-blue-100">
         <div className="text-center">
-          <h2 className="text-3xl font-bold leading-tight text-gray-800">
-            Welcome Back!
-          </h2>
+          <h2 className="text-3xl font-bold text-gray-800">Welcome Back!</h2>
           <p className="text-gray-500">Log in to your account to continue</p>
         </div>
 
@@ -90,7 +73,7 @@ const Login = () => {
             <input
               type="email"
               placeholder="your.email@example.com"
-              className="w-full rounded-lg border border-gray-300 bg-white h-12 px-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-lg border border-gray-300 bg-white h-12 px-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -99,7 +82,7 @@ const Login = () => {
 
           <label className="flex flex-col">
             <p className="text-sm font-medium text-gray-700 pb-1">Password</p>
-            <div className="flex w-full items-stretch rounded-lg border border-gray-300 bg-white">
+            <div className="flex items-stretch rounded-lg border border-gray-300 bg-white">
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
@@ -109,7 +92,7 @@ const Login = () => {
                 required
               />
               <div
-                className="flex items-center justify-center px-3 text-gray-500 cursor-pointer hover:text-blue-500"
+                className="flex items-center justify-center px-3 text-gray-500 cursor-pointer hover:text-blue-500 transition"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 <span className="material-symbols-outlined text-xl">
@@ -136,7 +119,7 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all duration-200"
+            className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition"
           >
             Log In
           </button>
@@ -160,29 +143,26 @@ const Login = () => {
         </div>
       </main>
 
-      <footer className="absolute bottom-0 left-0 right-0 p-6 text-center text-gray-200 text-sm z-10">
-        <a className="hover:text-blue-300" href="#">Terms of Service</a>
+      {/* Footer */}
+      <footer className="absolute bottom-0 left-0 right-0 p-6 text-center text-gray-500 text-sm z-10">
+        <a className="hover:text-blue-600" href="#">Terms of Service</a>
         <span className="mx-2">·</span>
-        <a className="hover:text-blue-300" href="#">Privacy Policy</a>
+        <a className="hover:text-blue-600" href="#">Privacy Policy</a>
       </footer>
 
-      {/* 🌈 Background Animation Styles */}
+      {/* 🌀 Smooth Wave Animation Styles */}
       <style>{`
-        @keyframes gradientMove {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
+        @keyframes bgMove {
+          0% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(-2%, -2%) scale(1.05); }
+          100% { transform: translate(0, 0) scale(1); }
         }
-        .animate-gradient {
-          animation: gradientMove 12s ease infinite;
-          background-size: 200% 200%;
+        .animate-bg-move {
+          animation: bgMove 20s ease-in-out infinite;
         }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); opacity: 0.4; }
-          50% { transform: translateY(-20px); opacity: 0.8; }
-        }
-        .animate-float {
-          animation: float 16s ease-in-out infinite;
+        .animate-bg-move-delayed {
+          animation: bgMove 25s ease-in-out infinite;
+          animation-delay: 5s;
         }
       `}</style>
     </div>
