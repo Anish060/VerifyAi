@@ -216,24 +216,36 @@ const VerificationHistory = () => {
                                                                     console.log("Sending record to details:", record);
 
   navigate("/VR", {
-    state: {
-      verificationResult: {
-        aiScore: record.ai_score ?? record.aiScore ?? 0,
-        deepfakeScore: record.deepfake_score,
-        fileSize: record.fileSize,
-        fileType: record.fileType,
-        summary: record.summary,
-        detailedExplanation: record.detaileddetails || record.detailedexplanation || record.detailedExplanation,
-        metadataScore: record.metadatascore,
-        linguisticScore: record.linguisticscore,
-        pixelInconsistencyScore: record.pixelinconsistencyscore,
-        source: record.sourcetokens,
-        analysisDetails: record.analysis_details,
-        imageAnalysis: record.imageanalysis // if exists
-      },
-      uploadedFileName: record.file_name,
+  state: {
+    verificationResult: {
+      aiScore: record.ai_score ?? record.aiScore ?? record.ai_score_percentage ?? 0,
+      deepfakeScore: record.deepfake_score ?? record.deepfakeScore ?? record.deepfake ?? 0,
+      fileSize: record.file_size ?? record.fileSize ?? "-",
+      fileType: record.file_type ?? record.fileType ?? "-",
+      summary: record.summary ?? record.ai_summary ?? "No summary available.",
+      detailedExplanation:
+        record.detailed_explanation ??
+        record.detaileddetails ??
+        record.detailedExplanation ??
+        record.analysisDetails ??
+        "No detailed explanation available.",
+      metadataScore:
+        record.metadata_score ?? record.metadataScore ?? record.metadatascore ?? 0,
+      linguisticScore:
+        record.linguistic_score ?? record.linguisticScore ?? record.linguisticscore ?? 0,
+      pixelInconsistencyScore:
+        record.pixel_inconsistency_score ??
+        record.pixelInconsistencyScore ??
+        record.pixelinconsistencyscore ??
+        0,
+      source: record.source ?? record.sourcetokens ?? "N/A",
+      analysisDetails: record.analysis_details ?? record.analysisDetails ?? null,
+      imageAnalysis: record.image_analysis ?? record.imageAnalysis ?? null,
     },
-  });
+    uploadedFileName: record.file_name ?? record.fileName ?? "Unknown File",
+  },
+});
+
 }}
 
                                                                     >View Details
